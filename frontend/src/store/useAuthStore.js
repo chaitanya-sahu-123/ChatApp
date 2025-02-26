@@ -1,6 +1,8 @@
 import {create} from "zustand";
 import {axiosInstance} from "../lib/axios.js";
+
 import toast from "react-hot-toast";
+// import { io } from "socket.io-client";
 
 export const useAuthStore = create((set)=>({
     authUser:null,
@@ -12,15 +14,26 @@ export const useAuthStore = create((set)=>({
     // login: (user) => set({ authUser: user }),
 
     checkAuth: async () => {
+        // try {
+        //   // refreshAccessToken();
+        //   const res = await axiosInstance.get("/auth/check");
+    
+        //   set({ authUser: null });
+        //   // get().connectSocket();
+        // } catch (error) {
+        //   console.log("Error in checkAuth:", error);
+        //   set({ authUser: null });
+        // }
         try {
           const res = await axiosInstance.get("/auth/check");
-    
           set({ authUser: res.data });
-          get().connectSocket();
+          
         } catch (error) {
-          console.log("Error in checkAuth:", error);
+          console.log("Auth Check Failed:", error.response?.data || error);
           set({ authUser: null });
-        } finally {
+          
+        }
+        finally {
           set({ isCheckingAuth: false });
         }
       },
@@ -43,10 +56,10 @@ export const useAuthStore = create((set)=>({
         try {
             await axiosInstance.post('/auth/logout', {}, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                    // Authorization: `Bearer ${localStorage.getItem("authToken")}`
                 }
             });
-            localStorage.removeItem("authToken"); // Remove JWT token
+            // localStorage.removeItem("authToken"); // Remove JWT token
             set({ authUser: null });
             toast.success('Logged out successfully');
         } catch (error) {

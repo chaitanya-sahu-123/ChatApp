@@ -48,63 +48,33 @@ export const signup = async(req,res) => {
         res.status(500).json({message:"Something went wrong"});
     }
 }
-export const login = async (req,res) => {
-    const {email,password}= req.body;
-    try {
-        const user = await User.findOne({email});
-        if(!user){
-            return res.status(400).json({message:"Invalid credentials"})
-        }
-        const isPwdCorrect = await bcrypt.compare(password,user.password);
-        if(!isPwdCorrect){
-            return res.status(400).json({message:"Invalid credentials"});
-        }
-        genToken(user._id,res);
-        res.status(200).json({
-            _id: user._id,
-            fullName: user.fullName,
-            email: user.email,
-            profilePic: user.profilePic,
-        })
-    } catch (error) {
-        console.log("Login controller error:",error.message);
-        res.status(500).json({message:"Something went wrong"});
-    }
-}
 
-// export const login = async (req, res) => {
-//     const { email, password } = req.body;
-//     try {
-//       const user = await User.findOne({ email });
-//       if (!user) {
-//         return res.status(400).json({ message: "Invalid credentials" });
-//       }
-//       const isPwdCorrect = await bcrypt.compare(password, user.password);
-//       if (!isPwdCorrect) {
-//         return res.status(400).json({ message: "Invalid credentials" });
-//       }
-//       // Generate the token and set it as a cookie
-//       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-//         expiresIn: "7d",
-//       });
-//       res.cookie("jwt", token, {
-//         httpOnly: true,
-//         secure: false, // Use false in development
-//         sameSite: "lax", // or "strict"
-//         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-//         path: "/",
-//       });
-//       res.status(200).json({
-//         _id: user._id,
-//         fullName: user.fullName,
-//         email: user.email,
-//         profilePic: user.profilePic,
-//       });
-//     } catch (error) {
-//       console.log("Login controller error:", error.message);
-//       res.status(500).json({ message: "Something went wrong" });
-//     }
-//   };
+
+export const login = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      const isPwdCorrect = await bcrypt.compare(password, user.password);
+      if (!isPwdCorrect) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      // Generate token and set cookie
+      genToken(user._id, res);
+      // Respond with user info (do not include the token in JSON since it is in a cookie)
+      res.status(200).json({
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        profilePic: user.profilePic,
+      });
+    } catch (error) {
+      console.log("Login controller error:", error.message);
+      res.status(500).json({ message: "Something went wrong" });
+    }
+  };
 export const logout = async (req,res) => {
     try {
         res.cookie('jwt',"",{
