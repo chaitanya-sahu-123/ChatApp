@@ -2,7 +2,7 @@ import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { genToken } from '../lib/utils.js';
 import cloudinary from '../lib/cloudinary.js';
-import jwt from 'jsonwebtoken';
+
 
 export const signup = async(req,res) => {
     const { fullName,email,password }=req.body;
@@ -96,7 +96,7 @@ export const updateProfile = async (req,res) => {
         }
 
         const uploadres = await cloudinary.uploader.upload(profilePic);
-        const updateduser=await User.findByIdAndUpdate(userId,{profilePic:uploadResponse.secure_url},{new:true});
+        const updateduser=await User.findByIdAndUpdate(userId,{profilePic:uploadres.secure_url},{new:true});
         res.status(200).json(updateduser);
     } catch (error) {
         console.log("Update profile controller error:",error.message);
