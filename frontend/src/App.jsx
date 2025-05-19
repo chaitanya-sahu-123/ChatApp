@@ -12,10 +12,14 @@ import { useThemeStore } from './store/useThemeStore.js'
 import {Loader} from "lucide-react"
 import {React} from 'react'
 import {Toaster} from 'react-hot-toast'
+import { useSocketMessageHandler } from "./hooks/useSocketMessageHandler.js";
+
 
 function App() {
-  const {authUser,checkAuth, isCheckingAuth} = useAuthStore();
+  const {authUser,checkAuth, isCheckingAuth,onlineUsers} = useAuthStore();
   const {theme} = useThemeStore();
+  useSocketMessageHandler();
+  console.log({onlineUsers});
   useEffect(()=>{
     checkAuth();
   },[checkAuth]);

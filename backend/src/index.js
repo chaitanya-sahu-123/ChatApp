@@ -5,9 +5,15 @@ import { connectdb } from './lib/db.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import messageRoutes from './routes/message.route.js';
+import {app,server} from './lib/socket.js';
+import path from 'path';
 
-const app = express();
+// const app = express();
+import './lib/cloudinary.js';
+dotenv.config();
 
+
+const __dirname=path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -21,16 +27,23 @@ app.use(
 );
 
 app.use('/api/auth',authRoutes);
-app.use('/api/message',messageRoutes);
-dotenv.config();
+app.use('/api/messages',messageRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Hello World');
+    res.send('ChatApp Backend');
 });
 
 const PORT=process.env.PORT;
 
-app.listen(PORT, () => {
+if(process.env.NODE_ENV==='production'){
+  app.use(permission.static(path.join(__dirname,'../frontend/dist')));
+
+  app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname,'../frontend','dist','index.html'))
+  })
+}
+
+server.listen(PORT, () => {
     console.log('Server is running on port',PORT);
-    connectdb();
+    connectdb(); 
 });
