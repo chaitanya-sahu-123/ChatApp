@@ -29,9 +29,9 @@ app.use(
 app.use('/api/auth',authRoutes);
 app.use('/api/messages',messageRoutes);
 
-app.get('/', (req, res) => {
-    res.send('ChatApp Backend');
-});
+// app.get('/', (req, res) => {
+//     res.send('ChatApp Backend');
+// });
 
 const PORT=process.env.PORT;
 
