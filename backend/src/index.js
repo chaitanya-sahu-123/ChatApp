@@ -33,6 +33,10 @@ app.use('/api/messages',messageRoutes);
 //     res.send('ChatApp Backend');
 // });
 
+app.get("/cron", (req, res) => {
+  res.status(200).send("OK");
+});
+
 const PORT=process.env.PORT;
 
 if(process.env.NODE_ENV==='production'){
